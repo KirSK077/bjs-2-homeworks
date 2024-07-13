@@ -6,7 +6,7 @@ function solveEquation(a, b, c) {
 	let d = b ** 2 - 4 * a * c;
 
 	if (d < 0) {
-		arr = [];
+		return arr;
 	} else if (d === 0) {
 		let x = -b / (2 * a);
 		arr = [x];
@@ -22,6 +22,5 @@ function calculateTotalMortgage(percent, contribution, amount, countMonths) {
 	let bodyPayment = amount - contribution;
 	let percentMonth = percent / (12 * 100);
 	let paymentMonth = bodyPayment * (percentMonth + (percentMonth / ((Math.pow(1 + percentMonth, countMonths)) - 1)));
-	let totalPayment = +(paymentMonth * countMonths).toFixed(2);
-	return totalPayment;
+	return +(paymentMonth * countMonths).toFixed(2);
 }
