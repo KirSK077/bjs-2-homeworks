@@ -10,7 +10,7 @@ Student.prototype.setSubject = function(subjectName) {
 }
 
 Student.prototype.addMarks = function(...marks) {
-	if (!this.excluded) {
+	if (this.marks !== undefined) {
 		this.marks.push(...marks);
 		return this.marks;
 	}
@@ -27,5 +27,4 @@ Student.prototype.exclude = function(reason) {
 	this.excluded = reason;
 	delete this.subject;
 	delete this.marks;
-	return this;
 }
