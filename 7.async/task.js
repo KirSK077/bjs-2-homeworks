@@ -5,14 +5,15 @@ class AlarmClock {
     }
 
     addClock(time, callback) {
-        if (time && callback) {
-            this.alarmCollection.push({time, callback, canCall: true});
-            if (this.alarmCollection.every(alarm => alarm.time !== time)) {
-                console.warn('Уже присутствует звонок на это же время');
-            }
-        } else {
+        if (!time || !callback) {
             throw new Error('Отсутствуют обязательные аргументы');
         }
+        if (this.alarmCollection.some(alarm => alarm.time === time)) {
+            console.warn('Уже присутствует звонок на это же время');
+        } else if (this.intervalId) {
+            this.stop();
+        }
+        this.alarmCollection.push({time, callback, canCall: true});
     }
 
     removeClock(time) {
@@ -21,22 +22,23 @@ class AlarmClock {
 
     getCurrentFormattedTime() {
         const date = new Date();
-        return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        return date.toLocaleTimeString('ru-RU', {hour: '2-digit', minute: '2-digit'});
     }
 
     start() {
-        if (!this.intervalId) {
-            this.intervalId = setInterval(() => {
-                this.alarmCollection.forEach(alarm => {
-                    if (this.getCurrentFormattedTime() === alarm.time && alarm.canCall) {
-                        alarm.callback();
-                        alarm.canCall = false;
-                    }
-                });
-            }, 1000);
-        } else {
+        if (this.intervalId) {
             console.warn('Будильник уже запущен');
+            return;
         }
+
+        this.intervalId = setInterval(() => {
+            this.alarmCollection.forEach(alarm => {
+                if (this.getCurrentFormattedTime() === alarm.time && alarm.canCall) {
+                    alarm.callback();
+                    alarm.canCall = false;
+                }
+            });
+        }, 1000);
     }
 
     stop() {
@@ -51,6 +53,5 @@ class AlarmClock {
     clearAlarms() {
         this.stop();
         this.alarmCollection = [];
-        this.resetAllCalls();
     }
 }
